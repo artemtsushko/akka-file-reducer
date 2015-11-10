@@ -1,8 +1,10 @@
-import actors.FileProcessor;
+package tsushko.filereducer;
+
+import tsushko.filereducer.actors.FileProcessor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import messages.ProcessFile;
+import tsushko.filereducer.messages.ProcessFile;
 
 /**
  * Takes input and output file paths as command line arguments
@@ -18,6 +20,6 @@ public class Main {
         ActorRef fileProcessor = system.actorOf(
                 Props.create(FileProcessor.class),
                 "master");
-        fileProcessor.tell(new ProcessFile(args[0],args[1]),ActorRef.noSender());
+        fileProcessor.tell(new ProcessFile(args[0], args[1]), ActorRef.noSender());
     }
 }

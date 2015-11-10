@@ -1,4 +1,4 @@
-package actors;
+package tsushko.filereducer.actors;
 
 import akka.actor.ActorRef;
 import akka.actor.PoisonPill;
@@ -6,7 +6,7 @@ import akka.actor.Props;
 import akka.actor.UntypedActor;
 import akka.routing.Broadcast;
 import akka.routing.FromConfig;
-import messages.*;
+import tsushko.filereducer.messages.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,7 +16,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The master actor that, once received {@link messages.ProcessFile} message,
+ * The master actor that, once received
+ * {@link tsushko.filereducer.messages.ProcessFile} message,
  * reduces the input file containing strings "ID;amount"
  * to output file containing string "ID;totalAmount"
  * and then terminates the entire <code>ActorSystem</code>
@@ -37,7 +38,7 @@ public class FileProcessor extends UntypedActor {
     public void preStart() throws Exception {
         linesRouter = getContext().actorOf(
                 FromConfig.getInstance().props(Props.create(LineProcessor.class)),
-                "lineRouter");
+                "linesRouter");
     }
 
 

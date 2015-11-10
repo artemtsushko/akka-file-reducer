@@ -1,9 +1,9 @@
-package actors;
+package tsushko.filereducer.actors;
 
 import akka.actor.UntypedActor;
-import messages.Finish;
-import messages.LinesProcessed;
-import messages.ProcessLine;
+import tsushko.filereducer.messages.Finish;
+import tsushko.filereducer.messages.LinesProcessed;
+import tsushko.filereducer.messages.ProcessLine;
 
 import java.math.BigDecimal;
 import java.util.HashMap;

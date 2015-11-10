@@ -1,4 +1,4 @@
-package messages;
+package tsushko.filereducer.messages;
 
 import java.io.Serializable;
 
