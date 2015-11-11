@@ -4,6 +4,8 @@ import akka.actor.UntypedActor;
 import tsushko.filereducer.messages.Finish;
 import tsushko.filereducer.messages.LinesProcessed;
 import tsushko.filereducer.messages.ProcessLine;
+import tsushko.filereducer.settings.SettingsImpl;
+import static tsushko.filereducer.settings.Settings.SettingsProvider;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -29,7 +31,11 @@ public class LineProcessor extends UntypedActor{
 
     @Override
     public void preStart() throws Exception {
-        map = new HashMap<>();
+        final SettingsImpl settings =
+                SettingsProvider.get(getContext().system());
+
+        map = new HashMap<>(settings.HASH_MAP_CAPACITY,
+                            settings.HASH_MAP_LOAD_FACTOR);
     }
 
     @Override
