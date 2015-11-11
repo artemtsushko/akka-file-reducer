@@ -1,9 +1,10 @@
 package tsushko.filereducer;
 
-import tsushko.filereducer.actors.FileProcessor;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import tsushko.filereducer.actors.FileProcessor;
+import tsushko.filereducer.actors.Terminator;
 import tsushko.filereducer.messages.ProcessFile;
 
 /**
@@ -20,6 +21,9 @@ public class Main {
         ActorRef fileProcessor = system.actorOf(
                 Props.create(FileProcessor.class),
                 "master");
-        fileProcessor.tell(new ProcessFile(args[0], args[1]), ActorRef.noSender());
+        ActorRef terminator = system.actorOf(
+                Props.create(Terminator.class, fileProcessor),
+                "terminator");
+        fileProcessor.tell(new ProcessFile(args[0], args[1]), terminator);
     }
 }

@@ -1,11 +1,10 @@
 package tsushko.filereducer.actors;
 
-import akka.actor.ActorRef;
-import akka.actor.PoisonPill;
-import akka.actor.Props;
-import akka.actor.UntypedActor;
+import akka.actor.*;
+import akka.japi.pf.DeciderBuilder;
 import akka.routing.Broadcast;
 import akka.routing.FromConfig;
+import scala.concurrent.duration.Duration;
 import tsushko.filereducer.messages.*;
 
 import java.io.BufferedReader;
@@ -27,6 +26,11 @@ import java.util.Map;
  */
 public class FileProcessor extends UntypedActor {
 
+    // Escalate any exception raised by it's child
+    private static SupervisorStrategy strategy = new OneForOneStrategy(
+                    DeciderBuilder.matchAny(o->SupervisorStrategy.escalate())
+                                  .build());
+
     private BufferedReader reader;
     private PrintWriter writer;
     private int linesSent = 0;
@@ -37,10 +41,15 @@ public class FileProcessor extends UntypedActor {
     @Override
     public void preStart() throws Exception {
         linesRouter = getContext().actorOf(
-                FromConfig.getInstance().props(Props.create(LineProcessor.class)),
+                FromConfig.getInstance().props(
+                        Props.create(LineProcessor.class)),
                 "linesRouter");
     }
 
+    @Override
+    public SupervisorStrategy supervisorStrategy() {
+        return strategy;
+    }
 
     @Override
     public void onReceive(Object message) throws Exception {
@@ -68,7 +77,7 @@ public class FileProcessor extends UntypedActor {
                 linesRouter.tell(PoisonPill.getInstance(), getSelf());
                 map.forEach((k,v)->writer.println(k+";"+v));
                 writer.close();
-                getContext().system().terminate();
+                getContext().stop(getSelf());
             }
         } else {
             unhandled(message);
